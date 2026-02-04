@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id       String   @id @default(cuid())
+  email    String   @unique
+  password String
+  name     String
+  role     String   @default("STAFF")
+  active   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  sales Sale[]
+}
+
+model Customer {
+  id           String        @id @default(cuid())
+  name         String
+  phone        String        @unique
+  email        String?
+  address      String?
+  creditStatus String        @default("CLEAR")
+  totalSpent   Float         @default(0)
+  loyaltyPoints Int          @default(0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  
+  sales   Sale[]
+  credits Credit[]
+}
+
+model Phone {
+  id            String      @id @default(cuid())
+  imei          String      @unique
+  brand         String
+  model         String
+  color         String
+  batteryHealth Int
+  buyingSource  String
+  purchasePrice Float
+  sellingPrice  Float
+  status        String      @default("IN_STOCK")
+  condition     String      @default("EXCELLENT") // EXCELLENT, GOOD, FAIR, POOR
+  storageGB     Int?
+  ramGB         Int?
+  notes         String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  
+  stockMovements StockMovement[]
+}
+
+model Laptop {
+  id            String       @id @default(cuid())
+  serialNumber  String       @unique
+  brand         String
+  model         String
+  specifications String
+  purchasePrice Float
+  sellingPrice  Float
+  status        String       @default("IN_STOCK")
+  condition     String       @default("EXCELLENT")
+  notes         String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  
+  stockMovements StockMovement[]
+}
+
+model Watch {
+  id            String      @id @default(cuid())
+  serialNumber  String      @unique
+  brand         String
+  model         String
+  purchasePrice Float
+  sellingPrice  Float
+  status        String      @default("IN_STOCK")
+  condition     String      @default("EXCELLENT")
+  notes         String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  
+  stockMovements StockMovement[]
+}
+
+model Accessory {
+  id            String          @id @default(cuid())
+  sku           String          @unique
+  category      String
+  brand         String
+  type          String
+  purchasePrice Float
+  sellingPrice  Float
+  stockQuantity Int
+  minStockLevel Int             @default(5)
+  status        String          @default("ACTIVE")
+  notes         String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  
+  stockMovements StockMovement[]
+}
+
+model Sale {
+  id           String      @id @default(cuid())
+  invoiceNumber String?    @unique
+  customerId   String
+  productType  String
+  productId    String
+  sellingPrice Float
+  purchasePrice Float     @default(0)
+  profit       Float       @default(0)
+  paidAmount   Float
+  remainingAmount Float
+  paymentMode  String
+  discount     Float       @default(0)
+  discountType String      @default("FIXED") // FIXED or PERCENT
+  saleDate     DateTime    @default(now())
+  salespersonId String?
+  notes        String?
+  
+  customer    Customer @relation(fields: [customerId], references: [id])
+  salesperson User?    @relation(fields: [salespersonId], references: [id])
+  
+  credits Credit[]
+}
+
+model Credit {
+  id              String        @id @default(cuid())
+  customerId      String
+  saleId          String
+  totalAmount     Float
+  paidAmount      Float
+  remainingAmount Float
+  dueDate         DateTime
+  reminderStatus  String        @default("PENDING")
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  
+  customer Customer @relation(fields: [customerId], references: [id])
+  sale     Sale     @relation(fields: [saleId], references: [id])
+}
+
+model Expense {
+  id       String        @id @default(cuid())
+  category String
+  amount   Float
+  date     DateTime      @default(now())
+  notes    String?
+  createdAt DateTime     @default(now())
+}
+
+model StockMovement {
+  id          String   @id @default(cuid())
+  productType String   // PHONE, LAPTOP, WATCH, ACCESSORY
+  productId   String
+  movementType String  // IN, OUT, ADJUSTMENT
+  quantity    Int      @default(1)
+  reason      String   // PURCHASE, SALE, RETURN, DAMAGE, ADJUSTMENT
+  notes       String?
+  createdAt   DateTime @default(now())
+  
+  // Product relations
+  phone     Phone?     @relation(fields: [productId], references: [id])
+  laptop    Laptop?    @relation(fields: [productId], references: [id])
+  watch     Watch?     @relation(fields: [productId], references: [id])
+  accessory Accessory? @relation(fields: [productId], references: [id])
+}
+
+model SystemSettings {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
