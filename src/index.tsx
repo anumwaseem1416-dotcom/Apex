@@ -1,5 +1,13 @@
-import './index.css';
+import "./index.css";
 import React from "react";
 import { render } from "react-dom";
 import { App } from "./App";
-render(<App />, document.getElementById("root"));
+import { SpeedInsights } from "@vercel/speed-insights/react";
+
+render(
+  <>
+    <App />
+    <SpeedInsights />
+  </>,
+  document.getElementById("root")
+);
