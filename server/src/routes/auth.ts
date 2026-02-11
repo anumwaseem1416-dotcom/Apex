@@ -6,7 +6,16 @@ import { authenticateToken, requireRole } from '../middleware/auth';
 
 const router = express.Router();
 const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+function getJwtSecret() {
+  const secret = process.env.JWT_SECRET;
+  if (secret) return secret;
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('JWT_SECRET is required in production');
+  }
+  return 'dev-insecure-secret';
+}
+
+const JWT_SECRET = getJwtSecret();
 
 // Login
 router.post('/login', async (req, res) => {
