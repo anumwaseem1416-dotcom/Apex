@@ -53,8 +53,6 @@ model Phone {
   notes         String?
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
-  
-  stockMovements StockMovement[]
 }
 
 model Laptop {
@@ -70,8 +68,6 @@ model Laptop {
   notes         String?
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
-  
-  stockMovements StockMovement[]
 }
 
 model Watch {
@@ -86,8 +82,6 @@ model Watch {
   notes         String?
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
-  
-  stockMovements StockMovement[]
 }
 
 model Accessory {
@@ -104,8 +98,6 @@ model Accessory {
   notes         String?
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
-  
-  stockMovements StockMovement[]
 }
 
 model Sale {
@@ -166,12 +158,6 @@ model StockMovement {
   reason      String   // PURCHASE, SALE, RETURN, DAMAGE, ADJUSTMENT
   notes       String?
   createdAt   DateTime @default(now())
-  
-  // Product relations
-  phone     Phone?     @relation(fields: [productId], references: [id])
-  laptop    Laptop?    @relation(fields: [productId], references: [id])
-  watch     Watch?     @relation(fields: [productId], references: [id])
-  accessory Accessory? @relation(fields: [productId], references: [id])
 }
 
 model SystemSettings {
