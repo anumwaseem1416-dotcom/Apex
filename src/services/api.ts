@@ -1,6 +1,17 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:3001/api';
+// In production (e.g. Vercel), localhost points to the user's machine.
+// Configure this in Vercel as an environment variable, e.g.
+// VITE_API_BASE_URL=https://your-backend-domain.com/api
+const envBaseUrl =
+  import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL;
+
+const isLocalhost =
+  typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1');
+
+const API_BASE_URL = envBaseUrl || (isLocalhost ? 'http://localhost:3001/api' : '/api');
 
 const api = axios.create({
   baseURL: API_BASE_URL,
