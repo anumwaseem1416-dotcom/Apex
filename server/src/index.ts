@@ -24,6 +24,16 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "../../dist")));
 
 // API Routes
+app.get("/api/health", async (_req, res) => {
+  try {
+    // Verify DB connectivity without exposing details
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ ok: true, db: true });
+  } catch {
+    res.status(500).json({ ok: false, db: false });
+  }
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/products", productRoutes);
