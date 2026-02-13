@@ -1,5 +1,5 @@
 // Test script to verify credit connection
-const axios = require('axios');
+import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:3001/api';
 
