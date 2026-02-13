@@ -28,8 +28,14 @@ api.interceptors.request.use((config) => {
 
 // Auth
 export const auth = {
-  login: (email: string, password: string) => api.post('/auth/login', { email, password }),
-  createUser: (userData: any) => api.post('/auth/users', userData),
+  // Frontend-only authentication: backend auth endpoints are intentionally disabled.
+  // (Keeps other API flows unchanged.)
+  login: async (_email: string, _password: string) => {
+    throw new Error('Backend authentication is disabled (frontend-only auth).');
+  },
+  createUser: async (_userData: any) => {
+    throw new Error('Backend authentication is disabled (frontend-only auth).');
+  },
 };
 
 // Customers
